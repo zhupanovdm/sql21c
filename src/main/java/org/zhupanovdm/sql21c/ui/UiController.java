@@ -29,8 +29,6 @@ public class UiController {
 
     @FXML
     protected void onTransformButtonClick() {
-        // C:\_DEV\acc_simple_mapping.json
-
         TransformTask transformTask = new TransformTask(textScript.getText(), fieldMappingFile.getText());
         transformTask.setOnSucceeded(event -> {
             textResult.setText(transformTask.getValue());

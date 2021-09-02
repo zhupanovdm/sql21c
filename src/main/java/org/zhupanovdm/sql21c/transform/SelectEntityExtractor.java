@@ -15,22 +15,17 @@ import org.zhupanovdm.sql21c.transform.model.db.StatementDataSource;
 import java.util.*;
 
 public class SelectEntityExtractor implements SelectVisitor, StatementModel {
-    private final Map<String, StatementDataSource> references = new HashMap<>();
+    private final Map<String, StatementDataSource> sourceAliases = new HashMap<>();
+    private final Map<String, StatementDataSource> sourceNames = new HashMap<>();
     private final Set<String> unknownStatementFields = new HashSet<>();
 
     @Override
     public void visit(PlainSelect plainSelect) {
-        StatementDataSource statementDataSource;
-        Table table = plainSelect.getFromItem(Table.class);
-        if (table != null) {
-            statementDataSource = new StatementDataSource(table);
-            references.put(statementDataSource.getReference(), statementDataSource);
-        }
+        addStatementDataSource(plainSelect.getFromItem(Table.class));
 
         if (plainSelect.getJoins() != null) {
             for (Join join : plainSelect.getJoins()) {
-                statementDataSource = new StatementDataSource(join.getRightItem(Table.class));
-                references.put(statementDataSource.getReference(), statementDataSource);
+                addStatementDataSource(join.getRightItem(Table.class));
                 if (join.getOnExpression() != null) {
                     findAttributesInExpression(join.getOnExpression());
                 }
@@ -59,6 +54,8 @@ public class SelectEntityExtractor implements SelectVisitor, StatementModel {
                 findAttributesInExpression(element.getExpression());
             }
         }
+
+        findAttributesInExpression(plainSelect.getHaving());
 
     }
 
@@ -134,13 +131,29 @@ public class SelectEntityExtractor implements SelectVisitor, StatementModel {
         }
     }
 
+    private void addStatementDataSource(Table table) {
+        if (table == null) {
+            return;
+        }
+
+        StatementDataSource sds = new StatementDataSource(table);
+        if (sds.getAlias() != null) {
+            sourceAliases.put(sds.getAlias(), sds);
+        }
+        sourceNames.put(sds.getName(), sds);
+    }
+
     private StatementDataSource findStatementDataSource(Table table) {
-        return references.get(new StatementDataSource(table).getReference());
+        StatementDataSource source = sourceNames.get(table.getName());
+        if (source == null) {
+            source = sourceAliases.get(table.getName());
+        }
+        return source;
     }
 
     @Override
     public Collection<StatementDataSource> getDataSources() {
-        return references.values();
+        return sourceNames.values();
     }
 
     @Override

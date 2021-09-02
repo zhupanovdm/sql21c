@@ -23,10 +23,6 @@ public class StatementDataSource {
         return table.getAlias() == null ? null : table.getAlias().getName();
     }
 
-    public String getReference() {
-        return getAlias() == null ? getName() : getAlias();
-    }
-
     public String getName() {
         return table.getName();
     }

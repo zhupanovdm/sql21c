@@ -13,11 +13,14 @@ public class SelectStatementDataSourceExtractorTest {
         assertThat(extract("SELECT f FROM t").getDataSources().stream().map(StatementDataSource::getName))
                 .containsExactly("t");
 
-        assertThat(extract("SELECT a1.f FROM t1 a1, t2").getDataSources().stream().map(StatementDataSource::getName))
-                .containsExactlyInAnyOrder("t1", "t2");
-
         assertThat(extract("SELECT a.f FROM t a").getDataSources().stream().map(StatementDataSource::getAlias))
                 .containsExactly("a");
+    }
+
+    @Test
+    public void testSingleEntityAlias() {
+        assertThat(extract("SELECT a1.f FROM t1 a1, t2").getDataSources().stream().map(StatementDataSource::getName))
+                .containsExactlyInAnyOrder("t1", "t2");
     }
 
     @Test
@@ -97,6 +100,13 @@ public class SelectStatementDataSourceExtractorTest {
         assertThat(extract("SELECT 1 FROM t WHERE t.f1 AND CASE WHEN t.f2 IS NULL THEN '' ELSE t.f3 END")
                 .getDataSources().stream().flatMap(statementDataSource -> statementDataSource.getAttributes().stream().map(StatementAttribute::getName)))
                 .containsExactlyInAnyOrder("f1", "f2", "f3");
+    }
+
+    @Test
+    public void testAttributesHaving() {
+        assertThat(extract("SELECT COUNT(*) FROM t a GROUP BY a.f1, a.f2 HAVING sum(t.f3) <> sum(t.f4)")
+                .getDataSources().stream().flatMap(statementDataSource -> statementDataSource.getAttributes().stream().map(StatementAttribute::getName)))
+                .containsExactlyInAnyOrder("f1", "f2", "f3", "f4");
     }
 
     @Test

@@ -32,7 +32,7 @@ public class StatementAttribute {
 
     @Override
     public String toString() {
-        return "DataAttribute(" + statementDataSource.getReference() + "." + getName() + ")";
+        return "DataAttribute(" + statementDataSource.getName() + "." + getName() + ")";
     }
 
 }

@@ -5,8 +5,8 @@ import java.util.regex.Pattern;
 
 public class ParserUtils {
 
-    public static String replaceIncorrectParams(String kld) {
-        Matcher matcher = Pattern.compile("@\\d[_\\d\\w]*+").matcher(kld);
+    public static String replaceIncorrectParams(String input) {
+        Matcher matcher = Pattern.compile("@\\d[_\\d\\w]*+").matcher(input);
         StringBuilder sb = new StringBuilder();
         while (matcher.find()) {
             String group = matcher.group();
@@ -15,6 +15,13 @@ public class ParserUtils {
         }
         matcher.appendTail(sb);
         return sb.toString();
+    }
+
+    public static String withoutBraces(String input) {
+        if (input.charAt(0) == '[') {
+            return input.replace("[", "").replace("]", "");
+        }
+        return input;
     }
 
 }

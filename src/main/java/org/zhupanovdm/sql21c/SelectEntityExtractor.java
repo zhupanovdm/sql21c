@@ -1,10 +1,9 @@
 package org.zhupanovdm.sql21c;
 
-import net.sf.jsqlparser.expression.BinaryExpression;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.Function;
-import net.sf.jsqlparser.expression.Parenthesis;
+import net.sf.jsqlparser.expression.*;
+import net.sf.jsqlparser.expression.operators.relational.Between;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
@@ -43,9 +42,7 @@ public class SelectEntityExtractor implements SelectVisitor, StatementModel {
             }
         }
 
-        if (plainSelect.getWhere() != null) {
-            findAttributesInExpression(plainSelect.getWhere());
-        }
+        findAttributesInExpression(plainSelect.getWhere());
 
         GroupByElement groupBy = plainSelect.getGroupBy();
         if (groupBy != null) {
@@ -72,6 +69,10 @@ public class SelectEntityExtractor implements SelectVisitor, StatementModel {
     }
 
     private void findAttributesInExpression(Expression expression) {
+        if (expression == null) {
+            return;
+        }
+
         if (expression instanceof Column) {
             Column column = (Column) expression;
             String name = column.getColumnName();
@@ -101,6 +102,25 @@ public class SelectEntityExtractor implements SelectVisitor, StatementModel {
                     findAttributesInExpression(ex);
                 }
             }
+
+        } else if (expression instanceof CaseExpression) {
+            CaseExpression caseExpression = (CaseExpression) expression;
+            for (WhenClause whenClause : caseExpression.getWhenClauses()) {
+                findAttributesInExpression(whenClause.getWhenExpression());
+                findAttributesInExpression(whenClause.getThenExpression());
+            }
+            findAttributesInExpression(caseExpression.getElseExpression());
+
+        } else if (expression instanceof InExpression) {
+            InExpression inExpression = (InExpression) expression;
+            findAttributesInExpression(inExpression.getLeftExpression());
+            findAttributesInExpression(inExpression.getRightExpression());
+
+        } else if (expression instanceof Between) {
+            Between inExpression = (Between) expression;
+            findAttributesInExpression(inExpression.getLeftExpression());
+            findAttributesInExpression(inExpression.getBetweenExpressionStart());
+            findAttributesInExpression(inExpression.getBetweenExpressionEnd());
 
         }
     }

@@ -44,13 +44,18 @@ public class SelectEntityExtractor implements SelectVisitor, StatementModel {
 
         findAttributesInExpression(plainSelect.getWhere());
 
-        GroupByElement groupBy = plainSelect.getGroupBy();
-        if (groupBy != null) {
-            ExpressionList expressionList = groupBy.getGroupByExpressionList();
+        if (plainSelect.getGroupBy() != null) {
+            ExpressionList expressionList = plainSelect.getGroupBy().getGroupByExpressionList();
             if (expressionList != null) {
                 for (Expression expression : expressionList.getExpressions()) {
                     findAttributesInExpression(expression);
                 }
+            }
+        }
+
+        if (plainSelect.getOrderByElements() != null) {
+            for (OrderByElement element : plainSelect.getOrderByElements()) {
+                findAttributesInExpression(element.getExpression());
             }
         }
 

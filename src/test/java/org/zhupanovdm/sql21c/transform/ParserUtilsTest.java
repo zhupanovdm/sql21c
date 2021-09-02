@@ -1,7 +1,6 @@
 package org.zhupanovdm.sql21c.transform;
 
 import org.junit.Test;
-import org.zhupanovdm.sql21c.transform.ParserUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

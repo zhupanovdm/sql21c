@@ -1,10 +1,8 @@
 package org.zhupanovdm.sql21c.transform;
 
 import org.junit.Test;
-import org.zhupanovdm.sql21c.transform.model.db.StatementDataSource;
 import org.zhupanovdm.sql21c.transform.model.db.StatementAttribute;
-import org.zhupanovdm.sql21c.transform.SelectEntityExtractor;
-import org.zhupanovdm.sql21c.transform.SelectParser;
+import org.zhupanovdm.sql21c.transform.model.db.StatementDataSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -85,6 +83,13 @@ public class SelectStatementDataSourceExtractorTest {
         assertThat(extract("SELECT 1 as a FROM t WHERE t.f1 BETWEEN t.f2 AND t.f3")
                 .getDataSources().stream().flatMap(statementDataSource -> statementDataSource.getAttributes().stream().map(StatementAttribute::getName)))
                 .containsExactly("f1", "f2", "f3");
+    }
+
+    @Test
+    public void testAttributesOrderBy() {
+        assertThat(extract("SELECT 1 FROM t ORDER BY t.f1, t.f2")
+                .getDataSources().stream().flatMap(statementDataSource -> statementDataSource.getAttributes().stream().map(StatementAttribute::getName)))
+                .containsExactly("f1", "f2");
     }
 
     @Test

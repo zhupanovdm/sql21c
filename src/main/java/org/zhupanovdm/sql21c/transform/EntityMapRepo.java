@@ -1,8 +1,8 @@
-package org.zhupanovdm.sql21c;
+package org.zhupanovdm.sql21c.transform;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.zhupanovdm.sql21c.model.mapping.EntityMap;
-import org.zhupanovdm.sql21c.model.mapping.TableMappingFile;
+import org.zhupanovdm.sql21c.transform.model.mapping.EntityMap;
+import org.zhupanovdm.sql21c.transform.model.mapping.TableMappingFile;
 
 import java.io.IOException;
 import java.nio.file.Path;

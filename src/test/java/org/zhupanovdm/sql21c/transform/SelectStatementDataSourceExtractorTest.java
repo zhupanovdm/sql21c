@@ -1,8 +1,10 @@
-package org.zhupanovdm.sql21c;
+package org.zhupanovdm.sql21c.transform;
 
 import org.junit.Test;
-import org.zhupanovdm.sql21c.model.db.StatementDataSource;
-import org.zhupanovdm.sql21c.model.db.StatementAttribute;
+import org.zhupanovdm.sql21c.transform.model.db.StatementDataSource;
+import org.zhupanovdm.sql21c.transform.model.db.StatementAttribute;
+import org.zhupanovdm.sql21c.transform.SelectEntityExtractor;
+import org.zhupanovdm.sql21c.transform.SelectParser;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

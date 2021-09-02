@@ -1,4 +1,4 @@
-package org.zhupanovdm.sql21c.model.db;
+package org.zhupanovdm.sql21c.transform.model.db;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

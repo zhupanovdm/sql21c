@@ -1,4 +1,4 @@
-package org.zhupanovdm.sql21c.model.mapping;
+package org.zhupanovdm.sql21c.transform.model.mapping;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

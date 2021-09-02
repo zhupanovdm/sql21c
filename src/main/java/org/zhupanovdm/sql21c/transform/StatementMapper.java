@@ -1,12 +1,12 @@
-package org.zhupanovdm.sql21c;
+package org.zhupanovdm.sql21c.transform;
 
-import org.zhupanovdm.sql21c.model.db.StatementAttribute;
-import org.zhupanovdm.sql21c.model.db.StatementDataSource;
-import org.zhupanovdm.sql21c.model.mapping.EntityMap;
+import org.zhupanovdm.sql21c.transform.model.db.StatementAttribute;
+import org.zhupanovdm.sql21c.transform.model.db.StatementDataSource;
+import org.zhupanovdm.sql21c.transform.model.mapping.EntityMap;
 
 import java.util.NoSuchElementException;
 
-import static org.zhupanovdm.sql21c.ParserUtils.withoutBraces;
+import static org.zhupanovdm.sql21c.transform.ParserUtils.withoutBraces;
 
 public class StatementMapper {
 

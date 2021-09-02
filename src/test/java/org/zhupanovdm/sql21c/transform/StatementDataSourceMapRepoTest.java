@@ -1,11 +1,11 @@
-package org.zhupanovdm.sql21c;
+package org.zhupanovdm.sql21c.transform;
 
 import org.junit.Test;
-import org.zhupanovdm.sql21c.model.mapping.AttributeMap;
-import org.zhupanovdm.sql21c.model.mapping.EntityMap;
+import org.zhupanovdm.sql21c.transform.model.mapping.AttributeMap;
+import org.zhupanovdm.sql21c.transform.model.mapping.EntityMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.zhupanovdm.sql21c.TestUtils.resourcePath;
+import static org.zhupanovdm.sql21c.transform.TestUtils.resourcePath;
 
 public class StatementDataSourceMapRepoTest {
 

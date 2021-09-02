@@ -1,13 +1,13 @@
-package org.zhupanovdm.sql21c;
+package org.zhupanovdm.sql21c.transform;
 
 import com.github.vertical_blank.sqlformatter.SqlFormatter;
 import net.sf.jsqlparser.statement.select.Select;
 import org.junit.Test;
-import org.zhupanovdm.sql21c.model.db.StatementDataSource;
-import org.zhupanovdm.sql21c.model.db.StatementAttribute;
+import org.zhupanovdm.sql21c.transform.model.db.StatementDataSource;
+import org.zhupanovdm.sql21c.transform.model.db.StatementAttribute;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.zhupanovdm.sql21c.TestUtils.resource;
+import static org.zhupanovdm.sql21c.transform.TestUtils.resource;
 
 public class SelectStatementDataSourceExtractorSamplesTest {
 
@@ -35,7 +35,8 @@ public class SelectStatementDataSourceExtractorSamplesTest {
                         "sl._Fld16877", "sl._Fld16881", "sl._Document539_IDRRef", "sl._Fld16873RRef",
                         "it._Fld3885", "it._Code", "it._Description", "it._IDRRef", "cust._Code",
                         "cust._Fld3367", "cust._Fld3356", "cust._Fld3361", "cust._Fld3362", "cust._IDRRef",
-                        "agr._IDRRef", "agr._Fld2576RRef");
+                        "agr._IDRRef", "agr._Fld2576RRef", "loc._Code", "sh._Fld16828", "sh._Date_Time",
+                        "sl._Fld16879", "sl._Fld16879", "sl._Fld16881");
 
         assertThat(extractor.getUnknownStatementFields()).containsExactlyInAnyOrder("DATETIME", "VARCHAR", "year");
     }

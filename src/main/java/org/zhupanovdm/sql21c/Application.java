@@ -2,6 +2,7 @@ package org.zhupanovdm.sql21c;
 
 import com.github.vertical_blank.sqlformatter.SqlFormatter;
 import net.sf.jsqlparser.statement.select.Select;
+import org.zhupanovdm.sql21c.transform.*;
 
 import java.io.IOException;
 import java.nio.file.Files;

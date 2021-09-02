@@ -1,4 +1,4 @@
-package org.zhupanovdm.sql21c;
+package org.zhupanovdm.sql21c.transform;
 
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.relational.Between;
@@ -8,8 +8,8 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.values.ValuesStatement;
-import org.zhupanovdm.sql21c.model.db.StatementAttribute;
-import org.zhupanovdm.sql21c.model.db.StatementDataSource;
+import org.zhupanovdm.sql21c.transform.model.db.StatementAttribute;
+import org.zhupanovdm.sql21c.transform.model.db.StatementDataSource;
 
 import java.util.*;
 

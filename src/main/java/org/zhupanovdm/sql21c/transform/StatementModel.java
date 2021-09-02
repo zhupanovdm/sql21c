@@ -1,6 +1,6 @@
-package org.zhupanovdm.sql21c;
+package org.zhupanovdm.sql21c.transform;
 
-import org.zhupanovdm.sql21c.model.db.StatementDataSource;
+import org.zhupanovdm.sql21c.transform.model.db.StatementDataSource;
 
 import java.util.Collection;
 

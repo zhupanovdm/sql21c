@@ -1,4 +1,4 @@
-package org.zhupanovdm.sql21c;
+package org.zhupanovdm.sql21c.transform;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -82,14 +82,21 @@ public class SelectStatementDataSourceExtractorTest {
     public void testAttributesBetweenExpression() {
         assertThat(extract("SELECT 1 as a FROM t WHERE t.f1 BETWEEN t.f2 AND t.f3")
                 .getDataSources().stream().flatMap(statementDataSource -> statementDataSource.getAttributes().stream().map(StatementAttribute::getName)))
-                .containsExactly("f1", "f2", "f3");
+                .containsExactlyInAnyOrder("f1", "f2", "f3");
     }
 
     @Test
     public void testAttributesOrderBy() {
         assertThat(extract("SELECT 1 FROM t ORDER BY t.f1, t.f2")
                 .getDataSources().stream().flatMap(statementDataSource -> statementDataSource.getAttributes().stream().map(StatementAttribute::getName)))
-                .containsExactly("f1", "f2");
+                .containsExactlyInAnyOrder("f1", "f2");
+    }
+
+    @Test
+    public void testAttributesCase() {
+        assertThat(extract("SELECT 1 FROM t WHERE t.f1 AND CASE WHEN t.f2 IS NULL THEN '' ELSE t.f3 END")
+                .getDataSources().stream().flatMap(statementDataSource -> statementDataSource.getAttributes().stream().map(StatementAttribute::getName)))
+                .containsExactlyInAnyOrder("f1", "f2", "f3");
     }
 
     @Test

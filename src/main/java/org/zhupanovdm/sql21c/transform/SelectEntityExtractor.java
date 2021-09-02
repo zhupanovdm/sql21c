@@ -4,6 +4,7 @@ import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.relational.Between;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
+import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
@@ -126,6 +127,9 @@ public class SelectEntityExtractor implements SelectVisitor, StatementModel {
             findAttributesInExpression(inExpression.getLeftExpression());
             findAttributesInExpression(inExpression.getBetweenExpressionStart());
             findAttributesInExpression(inExpression.getBetweenExpressionEnd());
+
+        } else if (expression instanceof IsNullExpression) {
+            findAttributesInExpression(((IsNullExpression) expression).getLeftExpression());
 
         }
     }

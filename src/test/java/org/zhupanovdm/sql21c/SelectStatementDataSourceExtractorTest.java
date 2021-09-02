@@ -1,73 +1,73 @@
 package org.zhupanovdm.sql21c;
 
 import org.junit.Test;
-import org.zhupanovdm.sql21c.model.Entity;
-import org.zhupanovdm.sql21c.model.EntityAttribute;
+import org.zhupanovdm.sql21c.model.db.StatementDataSource;
+import org.zhupanovdm.sql21c.model.db.StatementAttribute;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SelectEntityExtractorTest {
+public class SelectStatementDataSourceExtractorTest {
 
     @Test
     public void testSingleEntity() {
-        assertThat(extract("SELECT f from t").getAllEntities().stream().map(Entity::getName))
+        assertThat(extract("SELECT f from t").getDataSources().stream().map(StatementDataSource::getName))
                 .containsExactly("t");
 
-        assertThat(extract("SELECT a1.f from t1 a1, t2").getAllEntities().stream().map(Entity::getName))
+        assertThat(extract("SELECT a1.f from t1 a1, t2").getDataSources().stream().map(StatementDataSource::getName))
                 .containsExactlyInAnyOrder("t1", "t2");
 
-        assertThat(extract("SELECT a.f from t a").getAllEntities().stream().map(Entity::getAlias))
+        assertThat(extract("SELECT a.f from t a").getDataSources().stream().map(StatementDataSource::getAlias))
                 .containsExactly("a");
     }
 
     @Test
     public void testSourceJoin() {
         assertThat(extract("SELECT t1.f1 from t1 INNER JOIN t2 ON t1.f1 = t2.f1")
-                .getAllEntities().stream().map(Entity::getName))
+                .getDataSources().stream().map(StatementDataSource::getName))
                 .containsExactlyInAnyOrder("t1", "t2");
 
         assertThat(extract("SELECT a1.f1 from t1 a1 INNER JOIN t2 a2 ON a1.f1 = a2.f1")
-                .getAllEntities().stream().map(Entity::getAlias))
+                .getDataSources().stream().map(StatementDataSource::getAlias))
                 .containsExactlyInAnyOrder("a1", "a2");
     }
 
     @Test
     public void testUnknownAttributes() {
-        assertThat(extract("SELECT f from t").getUnknownAttributes())
+        assertThat(extract("SELECT f from t").getUnknownStatementFields())
                 .containsExactly("f");
 
-        assertThat(extract("SELECT f from t a").getUnknownAttributes())
+        assertThat(extract("SELECT f from t a").getUnknownStatementFields())
                 .containsExactly("f");
 
-        assertThat(extract("SELECT f + 1 from t a").getUnknownAttributes())
+        assertThat(extract("SELECT f + 1 from t a").getUnknownStatementFields())
                 .containsExactly("f");
 
-        assertThat(extract("SELECT f from t").getAllEntities())
-                .allMatch(entity -> entity.getAttributes().isEmpty());
+        assertThat(extract("SELECT f from t").getDataSources())
+                .allMatch(statementDataSource -> statementDataSource.getAttributes().isEmpty());
     }
 
     @Test
     public void testAttributes() {
         assertThat(extract("SELECT t.f1 + (1 + t.f2) * 2 a1 from t")
-                .getAllEntities().stream().flatMap(entity -> entity.getAttributes().stream().map(EntityAttribute::getName)))
+                .getDataSources().stream().flatMap(statementDataSource -> statementDataSource.getAttributes().stream().map(StatementAttribute::getName)))
                 .containsExactlyInAnyOrder("f1", "f2");
 
         assertThat(extract("SELECT t1.f1 from t1 INNER JOIN t2 ON t1.f2 = t2.f3")
-                .getAllEntities().stream().flatMap(entity -> entity.getAttributes().stream().map(EntityAttribute::getName)))
+                .getDataSources().stream().flatMap(statementDataSource -> statementDataSource.getAttributes().stream().map(StatementAttribute::getName)))
                 .containsExactlyInAnyOrder("f1", "f2", "f3");
     }
 
     @Test
     public void testAttributesWhere() {
         assertThat(extract("SELECT 1 from t WHERE t.f1 + t.f2 * 2 > 500")
-                .getAllEntities().stream().flatMap(entity -> entity.getAttributes().stream().map(EntityAttribute::getName)))
+                .getDataSources().stream().flatMap(statementDataSource -> statementDataSource.getAttributes().stream().map(StatementAttribute::getName)))
                 .containsExactlyInAnyOrder("f1", "f2");
     }
 
     @Test
     public void testAttributesGroupBy() {
         assertThat(extract("SELECT COUNT(*) from t a GROUP BY a.f1, a.f2")
-                .getAllEntities().stream().flatMap(entity -> entity.getAttributes().stream().map(EntityAttribute::getName)))
+                .getDataSources().stream().flatMap(statementDataSource -> statementDataSource.getAttributes().stream().map(StatementAttribute::getName)))
                 .containsExactlyInAnyOrder("f1", "f2");
     }
 

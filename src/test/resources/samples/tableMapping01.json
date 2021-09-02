@@ -1,0 +1,32 @@
+{
+  "mapping": [
+    {
+      "table": "table1",
+      "entity": "entity1",
+      "attributes": [
+        {
+          "name" :  "name1",
+          "field" : "field1"
+        },
+        {
+          "name" :  "name2",
+          "field" : "field2"
+        }
+      ]
+    },
+    {
+      "table": "table2",
+      "entity": "entity2",
+      "attributes": [
+        {
+          "name" :  "name3",
+          "field" : "field3"
+        },
+        {
+          "name" :  "name4",
+          "field" : "field4"
+        }
+      ]
+    }
+  ]
+}

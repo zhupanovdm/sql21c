@@ -1,4 +1,4 @@
-package org.zhupanovdm.sql21c.model;
+package org.zhupanovdm.sql21c.model.db;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,13 +9,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 @EqualsAndHashCode(of = "table")
-public class Entity {
+public class StatementDataSource {
     @Getter
     private final Table table;
 
-    private final List<EntityAttribute> attributes = new LinkedList<>();
+    private final List<StatementAttribute> attributes = new LinkedList<>();
 
-    public Entity(Table table) {
+    public StatementDataSource(Table table) {
         this.table = table;
     }
 
@@ -31,12 +31,16 @@ public class Entity {
         return table.getName();
     }
 
-    public List<EntityAttribute> getAttributes() {
+    public List<StatementAttribute> getAttributes() {
         return Collections.unmodifiableList(attributes);
     }
 
-    public void addAttribute(EntityAttribute attribute) {
+    public void addAttribute(StatementAttribute attribute) {
         attributes.add(attribute);
+    }
+
+    public void setName(String name) {
+        table.setName(name);
     }
 
     @Override

@@ -1,0 +1,84 @@
+{
+  "mapping": [
+    {
+      "table": "_Reference266",
+      "entity": "Справочник.Организации",
+      "attributes": [
+        {
+          "name" :  "_Code",
+          "field" : "Код"
+        },
+        {
+          "name" :  "_Description",
+          "field" : "Наименование"
+        },
+        {
+          "name" :  "_IDRRef",
+          "field" : "Ссылка"
+        }
+      ]
+    },
+    {
+      "table": "[_Document539]",
+      "entity": "Документ.РеализацияТоваровУслуг",
+      "attributes": [
+        {
+          "name" :  "_Number",
+          "field" : "Номер"
+        },
+        {
+          "name" :  "_Date_Time",
+          "field" : "Дата"
+        },
+        {
+          "name" :  "_Fld16841",
+          "field" : "Поле1"
+        },
+        {
+          "name" :  "_Fld16817RRef",
+          "field" : "Поле2"
+        },
+        {
+          "name" :  "_Posted",
+          "field" : "Проведен"
+        },
+        {
+          "name" :  "_Marked",
+          "field" : "ПометкаУдаления"
+        },
+        {
+          "name" :  "_IDRRef",
+          "field" : "Ссылка"
+        },
+        {
+          "name" :  "_Fld16821RRef",
+          "field" : "Поле3"
+        },
+        {
+          "name" :  "_Fld16816RRef",
+          "field" : "Поле4"
+        },
+        {
+          "name" :  "_Fld16822RRef",
+          "field" : "Поле5"
+        },
+        {
+          "name" :  "_Fld16877",
+          "field" : "Поле6"
+        },
+        {
+          "name" :  "_Fld16881",
+          "field" : "Поле7"
+        },
+        {
+          "name" :  "_Fld16881",
+          "field" : "Поле8"
+        },
+        {
+          "name" :  "_Fld38453",
+          "field" : "Поле9"
+        }
+      ]
+    }
+  ]
+}

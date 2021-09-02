@@ -9,28 +9,28 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.values.ValuesStatement;
-import org.zhupanovdm.sql21c.model.EntityAttribute;
-import org.zhupanovdm.sql21c.model.Entity;
+import org.zhupanovdm.sql21c.model.db.StatementAttribute;
+import org.zhupanovdm.sql21c.model.db.StatementDataSource;
 
 import java.util.*;
 
-public class SelectEntityExtractor implements SelectVisitor {
-    private final Map<String, Entity> references = new HashMap<>();
-    private final Set<String> unknownAttributes = new HashSet<>();
+public class SelectEntityExtractor implements SelectVisitor, StatementModel {
+    private final Map<String, StatementDataSource> references = new HashMap<>();
+    private final Set<String> unknownStatementFields = new HashSet<>();
 
     @Override
     public void visit(PlainSelect plainSelect) {
-        Entity entity;
+        StatementDataSource statementDataSource;
         Table table = plainSelect.getFromItem(Table.class);
         if (table != null) {
-            entity = new Entity(table);
-            references.put(entity.getReference(), entity);
+            statementDataSource = new StatementDataSource(table);
+            references.put(statementDataSource.getReference(), statementDataSource);
         }
 
         if (plainSelect.getJoins() != null) {
             for (Join join : plainSelect.getJoins()) {
-                entity = new Entity(join.getRightItem(Table.class));
-                references.put(entity.getReference(), entity);
+                statementDataSource = new StatementDataSource(join.getRightItem(Table.class));
+                references.put(statementDataSource.getReference(), statementDataSource);
                 if (join.getOnExpression() != null) {
                     findAttributesInExpression(join.getOnExpression());
                 }
@@ -77,13 +77,13 @@ public class SelectEntityExtractor implements SelectVisitor {
             String name = column.getColumnName();
             Table table = column.getTable();
             if (table == null) {
-                unknownAttributes.add(name);
+                unknownStatementFields.add(name);
             } else {
-                Entity entity = findEntity(table);
-                if (entity == null) {
+                StatementDataSource statementDataSource = findStatementDataSource(table);
+                if (statementDataSource == null) {
                     throw new IllegalStateException("Cannot find entity for field: " + column.getFullyQualifiedName());
                 }
-                new EntityAttribute(entity, column);
+                new StatementAttribute(statementDataSource, column);
             }
 
         } else if (expression instanceof BinaryExpression) {
@@ -105,16 +105,18 @@ public class SelectEntityExtractor implements SelectVisitor {
         }
     }
 
-    private Entity findEntity(Table table) {
-        return references.get(new Entity(table).getReference());
+    private StatementDataSource findStatementDataSource(Table table) {
+        return references.get(new StatementDataSource(table).getReference());
     }
 
-    public Collection<Entity> getAllEntities() {
+    @Override
+    public Collection<StatementDataSource> getDataSources() {
         return references.values();
     }
 
-    public Collection<String> getUnknownAttributes() {
-        return Collections.unmodifiableCollection(unknownAttributes);
+    @Override
+    public Collection<String> getUnknownStatementFields() {
+        return Collections.unmodifiableCollection(unknownStatementFields);
     }
 
 }

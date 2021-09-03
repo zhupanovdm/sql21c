@@ -6,7 +6,8 @@ import org.zhupanovdm.sql21c.transform.model.mapping.EntityMap;
 
 import java.util.NoSuchElementException;
 
-import static org.zhupanovdm.sql21c.transform.ParserUtils.withoutBraces;
+import static org.zhupanovdm.sql21c.transform.ParserUtils.toEntityName;
+import static org.zhupanovdm.sql21c.transform.ParserUtils.toDboName;
 
 public class StatementMapper {
 
@@ -18,17 +19,20 @@ public class StatementMapper {
 
     public void map(StatementModel model) {
         for (StatementDataSource dataSource : model.getDataSources()) {
-            EntityMap entityMap = repo.findByTable(withoutBraces(dataSource.getName()));
+            EntityMap entityMap = repo.findByTable(toEntityName(dataSource.getName()));
             if (entityMap != null) {
-                dataSource.setName(entityMap.getEntity());
+
+                dataSource.setName(toDboName(entityMap.getEntity()));
 
                 for (StatementAttribute attribute : dataSource.getAttributes()) {
-                    attribute.setName(entityMap.getAttributes()
+                    String field = entityMap.getAttributes()
                             .stream()
-                            .filter(attributeMap -> attributeMap.getName().equals(withoutBraces(attribute.getName())))
+                            .filter(attributeMap -> attributeMap.getName().equals(toEntityName(attribute.getName())))
                             .findFirst()
                             .orElseThrow(() -> new NoSuchElementException("Cannot map " + attribute.getFullyQualifiedName()))
-                                    .getField());
+                            .getField();
+
+                    attribute.setName(toDboName(field));
                 }
             }
         }

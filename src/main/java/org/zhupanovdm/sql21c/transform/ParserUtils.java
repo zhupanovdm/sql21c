@@ -17,11 +17,15 @@ public class ParserUtils {
         return sb.toString();
     }
 
-    public static String withoutBraces(String input) {
+    public static String toEntityName(String input) {
         if (input.charAt(0) == '[') {
             return input.replace("[", "").replace("]", "");
         }
         return input;
+    }
+
+    public static String toDboName(String input) {
+        return '[' + input + ']';
     }
 
 }

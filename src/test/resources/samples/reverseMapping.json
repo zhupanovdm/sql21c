@@ -1,0 +1,26 @@
+{
+  "mapping": [
+    {
+      "table": "Справочник.Организации",
+      "entity": "_Reference266",
+      "attributes": [
+        {
+          "name" :  "Код",
+          "field" : "_Code"
+        },
+        {
+          "name" :  "Наименование",
+          "field" : "_Description"
+        },
+        {
+          "name" :  "Ссылка",
+          "field" : "_IDRRef"
+        },
+        {
+          "name" :  "Поле1",
+          "field" : "_Fld16841"
+        }
+      ]
+    }
+  ]
+}

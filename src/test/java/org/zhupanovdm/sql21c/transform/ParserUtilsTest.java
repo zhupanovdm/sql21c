@@ -30,7 +30,7 @@ public class ParserUtilsTest {
     @Test
     public void toDboName() {
         assertThat(ParserUtils.toDboName("abc"))
-                .isEqualTo("[abc]");
+                .isEqualTo("abc");
 
         assertThat(ParserUtils.toDboName("abc.def"))
                 .isEqualTo("[abc.def]");

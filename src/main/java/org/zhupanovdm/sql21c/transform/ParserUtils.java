@@ -28,7 +28,10 @@ public class ParserUtils {
     }
 
     public static String toDboName(String input) {
-        return '[' + input + ']';
+        if (input.contains(".")) {
+            return '[' + input + ']';
+        }
+        return input;
     }
 
 }

@@ -2,12 +2,13 @@ package org.zhupanovdm.sql21c.transform;
 
 import org.zhupanovdm.sql21c.transform.model.db.StatementAttribute;
 import org.zhupanovdm.sql21c.transform.model.db.StatementDataSource;
+import org.zhupanovdm.sql21c.transform.model.mapping.AttributeMap;
 import org.zhupanovdm.sql21c.transform.model.mapping.EntityMap;
 
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
-import static org.zhupanovdm.sql21c.transform.ParserUtils.toEntityName;
 import static org.zhupanovdm.sql21c.transform.ParserUtils.toDboName;
+import static org.zhupanovdm.sql21c.transform.ParserUtils.toEntityName;
 
 public class StatementMapper {
 
@@ -25,14 +26,11 @@ public class StatementMapper {
                 dataSource.setName(toDboName(entityMap.getEntity()));
 
                 for (StatementAttribute attribute : dataSource.getAttributes()) {
-                    String field = entityMap.getAttributes()
+                    Optional<AttributeMap> attrMap = entityMap.getAttributes()
                             .stream()
                             .filter(attributeMap -> attributeMap.getName().equals(toEntityName(attribute.getName())))
-                            .findFirst()
-                            .orElseThrow(() -> new NoSuchElementException("Cannot map " + attribute.getFullyQualifiedName()))
-                            .getField();
-
-                    attribute.setName(toDboName(field));
+                            .findFirst();
+                    attrMap.ifPresent(attributeMap -> attribute.setName(toDboName(attributeMap.getField())));
                 }
             }
         }

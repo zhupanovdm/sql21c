@@ -86,7 +86,8 @@ public class SelectEntityExtractor implements SelectVisitor, StatementModel {
                 if (statementDataSource == null) {
                     throw new IllegalStateException("Cannot find entity for field: " + column.getFullyQualifiedName());
                 }
-                new StatementAttribute(statementDataSource, column);
+                StatementAttribute attribute = new StatementAttribute(statementDataSource, column);
+                statementDataSource.addAttribute(attribute);
             }
 
         } else if (expression instanceof BinaryExpression) {
@@ -126,6 +127,10 @@ public class SelectEntityExtractor implements SelectVisitor, StatementModel {
 
         } else if (expression instanceof IsNullExpression) {
             findAttributesInExpression(((IsNullExpression) expression).getLeftExpression());
+
+        } else if (expression instanceof SignedExpression) {
+            SignedExpression signedExpression = (SignedExpression) expression;
+            findAttributesInExpression(signedExpression.getExpression());
 
         }
     }

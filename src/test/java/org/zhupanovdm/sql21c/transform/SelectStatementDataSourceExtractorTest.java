@@ -128,6 +128,20 @@ public class SelectStatementDataSourceExtractorTest {
     }
 
     @Test
+    public void attributesUnaryStmt() {
+        assertThat(extract("SELECT - t.f1 FROM t")
+                .getDataSources().stream().flatMap(statementDataSource -> statementDataSource.getAttributes().stream().map(StatementAttribute::getName)))
+                .containsExactly("f1");
+    }
+
+    @Test
+    public void attributesJoinCondition() {
+        assertThat(extract("SELECT 1 FROM t1 a1 INNER JOIN t2 a2 ON a1.f1 = a2.f2 AND a2.f2 = 1")
+                .getDataSources().stream().flatMap(statementDataSource -> statementDataSource.getAttributes().stream().map(StatementAttribute::getName)))
+                .containsExactlyInAnyOrder("f1", "f2", "f2");
+    }
+
+    @Test
     public void attributesOrderBy() {
         assertThat(extract("SELECT 1 FROM t ORDER BY t.f1, t.f2")
                 .getDataSources().stream().flatMap(statementDataSource -> statementDataSource.getAttributes().stream().map(StatementAttribute::getName)))

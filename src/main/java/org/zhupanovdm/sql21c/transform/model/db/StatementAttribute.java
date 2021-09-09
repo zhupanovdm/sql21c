@@ -14,10 +14,6 @@ public class StatementAttribute {
     public StatementAttribute(StatementDataSource statementDataSource, Column attribute) {
         this.statementDataSource = statementDataSource;
         this.attribute = attribute;
-
-        if (statementDataSource != null) {
-            statementDataSource.addAttribute(this);
-        }
     }
 
     public StatementAttribute(Column attribute) {

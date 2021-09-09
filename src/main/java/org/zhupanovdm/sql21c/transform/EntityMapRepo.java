@@ -17,7 +17,7 @@ public class EntityMapRepo {
     private Map<String, EntityMap> tableMap;
 
     public EntityMap findByTable(String table) {
-        return tableMap.get(table);
+        return tableMap.get(table.toLowerCase());
     }
 
     public void load(Path path) {
@@ -30,7 +30,7 @@ public class EntityMapRepo {
         tableMap = new HashMap<>();
         repo = mappingFile.getMapping();
         for (EntityMap em : repo) {
-            tableMap.put(em.getTable(), em);
+            tableMap.put(em.getTable().toLowerCase(), em);
         }
     }
 

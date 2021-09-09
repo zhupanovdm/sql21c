@@ -15,7 +15,13 @@ public class StatementAttribute {
         this.statementDataSource = statementDataSource;
         this.attribute = attribute;
 
-        statementDataSource.addAttribute(this);
+        if (statementDataSource != null) {
+            statementDataSource.addAttribute(this);
+        }
+    }
+
+    public StatementAttribute(Column attribute) {
+        this(null, attribute);
     }
 
     public String getName() {
@@ -32,7 +38,10 @@ public class StatementAttribute {
 
     @Override
     public String toString() {
-        return "DataAttribute(" + statementDataSource.getName() + "." + getName() + ")";
+        if (statementDataSource == null) {
+            return "DataAttribute(" + getName() + ")";
+        } else {
+            return "DataAttribute(" + statementDataSource.getName() + "." + getName() + ")";
+        }
     }
-
 }

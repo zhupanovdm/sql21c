@@ -38,7 +38,7 @@ public class SelectStatementDataSourceExtractorSamplesTest {
                         "agr._IDRRef", "agr._Fld2576RRef", "loc._Code", "sh._Fld16828", "sh._Date_Time",
                         "sl._Fld16879", "sl._Fld16879", "sl._Fld16881");
 
-        assertThat(extractor.getUnknownStatementFields()).containsExactlyInAnyOrder("DATETIME", "VARCHAR", "year");
+        assertThat(extractor.getUnknownStatementFields().stream().map(StatementAttribute::getName)).containsExactlyInAnyOrder("DATETIME", "VARCHAR", "year");
     }
 
 }

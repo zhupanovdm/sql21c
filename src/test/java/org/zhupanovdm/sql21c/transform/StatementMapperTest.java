@@ -43,4 +43,20 @@ public class StatementMapperTest {
         System.out.println(SqlFormatter.format(parse.toString()));
     }
 
+    @Test
+    public void unknownFields() {
+        SelectParser selectParser = new SelectParser("SELECT _IDRRef FROM dbo._acc39 WHERE _code IN ('62.01', '62.02')");
+        SelectEntityExtractor extractor = new SelectEntityExtractor();
+
+        Select parse = selectParser.parse(extractor);
+
+        EntityMapRepo repo = new EntityMapRepo();
+        repo.load(resourcePath("samples/tableMapping03.json"));
+
+        StatementMapper statementMapper = new StatementMapper(repo);
+        statementMapper.map(extractor);
+
+        System.out.println(SqlFormatter.format(parse.toString()));
+    }
+
 }

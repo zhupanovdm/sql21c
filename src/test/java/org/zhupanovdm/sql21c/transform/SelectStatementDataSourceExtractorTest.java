@@ -60,13 +60,13 @@ public class SelectStatementDataSourceExtractorTest {
 
     @Test
     public void unknownStatementFields() {
-        assertThat(extract("SELECT f FROM t").getUnknownStatementFields())
+        assertThat(extract("SELECT f FROM t").getUnknownStatementFields().stream().map(StatementAttribute::getName))
                 .containsExactly("f");
 
-        assertThat(extract("SELECT f FROM t a").getUnknownStatementFields())
+        assertThat(extract("SELECT f FROM t a").getUnknownStatementFields().stream().map(StatementAttribute::getName))
                 .containsExactly("f");
 
-        assertThat(extract("SELECT f + 1 FROM t a").getUnknownStatementFields())
+        assertThat(extract("SELECT f + 1 FROM t a").getUnknownStatementFields().stream().map(StatementAttribute::getName))
                 .containsExactly("f");
 
         assertThat(extract("SELECT f FROM t").getDataSources())

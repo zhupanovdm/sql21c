@@ -1,0 +1,22 @@
+{
+  "mapping": [
+    {
+      "table": "_Acc39",
+      "entity": "ПланСчетов.Хозрасчетный",
+      "attributes": [
+        {
+          "name" :  "_Code",
+          "field" : "Код"
+        },
+        {
+          "name" :  "_Description",
+          "field" : "Наименование"
+        },
+        {
+          "name" :  "_IDRRef",
+          "field" : "Ссылка"
+        }
+      ]
+    }
+  ]
+}

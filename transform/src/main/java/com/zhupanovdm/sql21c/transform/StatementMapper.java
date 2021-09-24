@@ -17,7 +17,7 @@ public class StatementMapper {
     }
 
     public void map(StatementModel model) {
-        List<StatementAttribute> unknown = new ArrayList<>(model.getUnknownStatementFields());
+        List<StatementAttribute> unknown = new ArrayList<>(model.getUnknownFields());
         for (StatementDataSource dataSource : model.getDataSources()) {
             EntityMap entityMap = repo.findByTable(ParserUtils.toEntityName(dataSource.getName()));
             if (entityMap != null) {
@@ -38,6 +38,9 @@ public class StatementMapper {
                 }
             }
         }
+    }
 
+    public static StatementMapper withFileRepo(String repoFileName) {
+        return new StatementMapper(EntityMapRepo.fromFile(repoFileName));
     }
 }

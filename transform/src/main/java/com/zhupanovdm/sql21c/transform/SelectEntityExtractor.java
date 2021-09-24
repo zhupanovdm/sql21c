@@ -17,7 +17,7 @@ import java.util.*;
 public class SelectEntityExtractor implements SelectVisitor, StatementModel {
     private final Map<String, StatementDataSource> sourceAliases = new HashMap<>();
     private final Map<String, StatementDataSource> sourceNames = new HashMap<>();
-    private final Set<StatementAttribute> unknownStatementFields = new HashSet<>();
+    private final Set<StatementAttribute> unknownFields = new HashSet<>();
 
     @Override
     public void visit(PlainSelect plainSelect) {
@@ -80,7 +80,7 @@ public class SelectEntityExtractor implements SelectVisitor, StatementModel {
             Column column = (Column) expression;
             Table table = column.getTable();
             if (table == null) {
-                unknownStatementFields.add(new StatementAttribute(column));
+                unknownFields.add(new StatementAttribute(column));
             } else {
                 StatementDataSource statementDataSource = findStatementDataSource(table);
                 if (statementDataSource == null) {
@@ -161,8 +161,7 @@ public class SelectEntityExtractor implements SelectVisitor, StatementModel {
     }
 
     @Override
-    public Set<StatementAttribute> getUnknownStatementFields() {
-        return Collections.unmodifiableSet(unknownStatementFields);
+    public Set<StatementAttribute> getUnknownFields() {
+        return Collections.unmodifiableSet(unknownFields);
     }
-
 }

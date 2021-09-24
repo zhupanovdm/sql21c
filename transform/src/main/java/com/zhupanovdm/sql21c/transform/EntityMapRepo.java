@@ -11,16 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 public class EntityMapRepo {
-
     private final ObjectMapper mapper = new ObjectMapper();
-    private List<EntityMap> repo;
     private Map<String, EntityMap> tableMap;
 
     public EntityMap findByTable(String table) {
         return tableMap.get(table.toLowerCase());
     }
 
-    public void load(Path path) {
+    public EntityMapRepo load(Path path) {
         TableMappingFile mappingFile;
         try {
             mappingFile = mapper.readValue(path.toFile(), TableMappingFile.class);
@@ -28,10 +26,14 @@ public class EntityMapRepo {
             throw new RuntimeException("Failed to read table mapping file.", e);
         }
         tableMap = new HashMap<>();
-        repo = mappingFile.getMapping();
+        List<EntityMap> repo = mappingFile.getMapping();
         for (EntityMap em : repo) {
             tableMap.put(em.getTable().toLowerCase(), em);
         }
+        return this;
     }
 
+    public static EntityMapRepo fromFile(String fileName) {
+        return new EntityMapRepo().load(Path.of(fileName));
+    }
 }

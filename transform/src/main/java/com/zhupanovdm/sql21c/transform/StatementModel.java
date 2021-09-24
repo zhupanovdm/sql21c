@@ -8,5 +8,5 @@ import java.util.Set;
 
 public interface StatementModel {
     Collection<StatementDataSource> getDataSources();
-    Set<StatementAttribute> getUnknownStatementFields();
+    Set<StatementAttribute> getUnknownFields();
 }

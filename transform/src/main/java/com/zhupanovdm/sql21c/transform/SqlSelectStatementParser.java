@@ -8,10 +8,10 @@ import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.select.SelectVisitor;
 
-public class SelectParser {
+public class SqlSelectStatementParser {
     private final CCJSqlParser parser;
 
-    public SelectParser(String selectStatement) {
+    public SqlSelectStatementParser(String selectStatement) {
         parser = CCJSqlParserUtil.newParser(selectStatement)
                 .withSquareBracketQuotation(true);
     }

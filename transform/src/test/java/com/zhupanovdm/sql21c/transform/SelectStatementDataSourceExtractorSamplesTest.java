@@ -9,11 +9,10 @@ import com.zhupanovdm.sql21c.transform.model.db.StatementAttribute;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SelectStatementDataSourceExtractorSamplesTest {
-
     @Test
     public void test() {
-        String resource = ParserUtils.replaceIncorrectParams(TestUtils.resource("samples/selectStatement01.sql"));
-        SelectParser selectParser = new SelectParser(resource);
+        String resource = ParserUtils.fixIncorrectParams(TestUtils.resource("samples/selectStatement01.sql"));
+        SqlSelectStatementParser selectParser = new SqlSelectStatementParser(resource);
         SelectEntityExtractor extractor = new SelectEntityExtractor();
 
         Select parse = selectParser.parse(extractor);
@@ -37,7 +36,6 @@ public class SelectStatementDataSourceExtractorSamplesTest {
                         "agr._IDRRef", "agr._Fld2576RRef", "loc._Code", "sh._Fld16828", "sh._Date_Time",
                         "sl._Fld16879", "sl._Fld16879", "sl._Fld16881");
 
-        assertThat(extractor.getUnknownStatementFields().stream().map(StatementAttribute::getName)).containsExactlyInAnyOrder("DATETIME", "VARCHAR", "year");
+        assertThat(extractor.getUnknownFields().stream().map(StatementAttribute::getName)).containsExactlyInAnyOrder("DATETIME", "VARCHAR", "year");
     }
-
 }

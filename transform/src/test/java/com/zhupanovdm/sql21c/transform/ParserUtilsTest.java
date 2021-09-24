@@ -5,16 +5,15 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ParserUtilsTest {
-
     @Test
     public void replaceIncorrectParams() {
-        assertThat(ParserUtils.replaceIncorrectParams(" @123abc=@123abc=123"))
+        assertThat(ParserUtils.fixIncorrectParams(" @123abc=@123abc=123"))
                 .isEqualTo(" @_123abc=@_123abc=123");
 
-        assertThat(ParserUtils.replaceIncorrectParams("@a123abc"))
+        assertThat(ParserUtils.fixIncorrectParams("@a123abc"))
                 .isEqualTo("@a123abc");
 
-        assertThat(ParserUtils.replaceIncorrectParams("a123abc"))
+        assertThat(ParserUtils.fixIncorrectParams("a123abc"))
                 .isEqualTo("a123abc");
     }
 
@@ -35,5 +34,4 @@ public class ParserUtilsTest {
         assertThat(ParserUtils.toDboName("abc.def"))
                 .isEqualTo("[abc.def]");
     }
-
 }

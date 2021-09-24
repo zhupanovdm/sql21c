@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static com.zhupanovdm.sql21c.transform.TestUtils.resourcePath;
 
 public class StatementDataSourceMapRepoTest {
-
     @Test
     public void test() {
         EntityMapRepo repo = new EntityMapRepo();
@@ -24,5 +23,4 @@ public class StatementDataSourceMapRepoTest {
         assertThat(table1.getAttributes().stream().map(AttributeMap::getField))
                 .containsExactlyInAnyOrder("field1", "field2");
     }
-
 }

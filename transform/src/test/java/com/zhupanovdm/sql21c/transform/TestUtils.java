@@ -18,5 +18,4 @@ public class TestUtils {
             throw new IllegalStateException("Cannot load resource", e);
         }
     }
-
 }

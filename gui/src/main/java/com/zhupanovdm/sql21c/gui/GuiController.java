@@ -1,20 +1,22 @@
 package com.zhupanovdm.sql21c.gui;
 
 import com.github.vertical_blank.sqlformatter.SqlFormatter;
+import com.zhupanovdm.sql21c.transform.SelectEntityExtractor;
+import com.zhupanovdm.sql21c.transform.SqlSelectStatementParser;
+import com.zhupanovdm.sql21c.transform.StatementMapper;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import net.sf.jsqlparser.statement.select.Select;
-import com.zhupanovdm.sql21c.transform.*;
 
-import java.nio.file.Path;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class GuiController {
+import static com.zhupanovdm.sql21c.transform.ParserUtils.fixIncorrectParams;
 
+public class GuiController {
     @FXML
     private TextField fieldMappingFile;
 
@@ -34,7 +36,6 @@ public class GuiController {
             textResult.setText(transformTask.getValue());
             labelStatus.setText("OK");
         });
-
         transformTask.setOnFailed(event -> labelStatus.setText(transformTask.getException().getMessage()));
 
         ExecutorService executorService = Executors.newFixedThreadPool(1);
@@ -53,21 +54,10 @@ public class GuiController {
 
         @Override
         protected String call() {
-            String resource = ParserUtils.replaceIncorrectParams(sql);
-            SelectParser selectParser = new SelectParser(resource);
             SelectEntityExtractor extractor = new SelectEntityExtractor();
-
-            Select parse = selectParser.parse(extractor);
-
-            EntityMapRepo repo = new EntityMapRepo();
-            repo.load(Path.of(file));
-
-            StatementMapper statementMapper = new StatementMapper(repo);
-            statementMapper.map(extractor);
-
-            return SqlFormatter.format(parse.toString());
+            Select stmt = new SqlSelectStatementParser(fixIncorrectParams(sql)).parse(extractor);
+            StatementMapper.withFileRepo(file).map(extractor);
+            return SqlFormatter.format(stmt.toString());
         }
     }
-
-
 }

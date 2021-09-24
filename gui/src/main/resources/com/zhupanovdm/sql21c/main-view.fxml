@@ -14,32 +14,24 @@
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
    </padding>
    <HBox prefHeight="15.0" prefWidth="406.0">
-      <children>
-         <Label text="Mapping file" />
-         <TextField fx:id="fieldMappingFile" HBox.hgrow="ALWAYS">
-            <HBox.margin>
-               <Insets left="20.0" />
-            </HBox.margin>
-         </TextField>
-      </children>
+      <Label text="Mapping file"/>
+      <TextField fx:id="fieldMappingFile" HBox.hgrow="ALWAYS">
+         <HBox.margin>
+            <Insets left="20.0"/>
+         </HBox.margin>
+      </TextField>
    </HBox>
-   <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
-      <items>
-         <VBox prefHeight="200.0" prefWidth="100.0">
-            <children>
-
-               <Label text="Script" />
-               <TextArea fx:id="textScript" prefHeight="200.0" prefWidth="200.0" />
-            </children>
-         </VBox>
-         <VBox prefHeight="200.0" prefWidth="100.0">
-            <children>
-               <Label text="Result" />
-               <TextArea fx:id="textResult" prefHeight="200.0" prefWidth="200.0" />
-               <Label fx:id="labelStatus" text="OK" />
-            </children>
-         </VBox>
-      </items>
+   <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0"
+              VBox.vgrow="ALWAYS">
+      <VBox prefHeight="200.0" prefWidth="100.0">
+         <Label text="Script"/>
+         <TextArea fx:id="textScript" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+      </VBox>
+      <VBox prefHeight="200.0" prefWidth="100.0">
+         <Label text="Result"/>
+         <TextArea fx:id="textResult" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+         <Label fx:id="labelStatus" text="OK"/>
+      </VBox>
    </SplitPane>
    <Button onAction="#onTransformButtonClick" text="Transform" />
 </VBox>

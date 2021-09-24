@@ -7,7 +7,6 @@ import com.zhupanovdm.sql21c.transform.model.db.StatementDataSource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SelectStatementDataSourceExtractorTest {
-
     @Test
     public void statementDataSourceFrom() {
         assertThat(extract("SELECT f FROM t").getDataSources().stream().map(StatementDataSource::getName))
@@ -60,13 +59,13 @@ public class SelectStatementDataSourceExtractorTest {
 
     @Test
     public void unknownStatementFields() {
-        assertThat(extract("SELECT f FROM t").getUnknownStatementFields().stream().map(StatementAttribute::getName))
+        assertThat(extract("SELECT f FROM t").getUnknownFields().stream().map(StatementAttribute::getName))
                 .containsExactly("f");
 
-        assertThat(extract("SELECT f FROM t a").getUnknownStatementFields().stream().map(StatementAttribute::getName))
+        assertThat(extract("SELECT f FROM t a").getUnknownFields().stream().map(StatementAttribute::getName))
                 .containsExactly("f");
 
-        assertThat(extract("SELECT f + 1 FROM t a").getUnknownStatementFields().stream().map(StatementAttribute::getName))
+        assertThat(extract("SELECT f + 1 FROM t a").getUnknownFields().stream().map(StatementAttribute::getName))
                 .containsExactly("f");
 
         assertThat(extract("SELECT f FROM t").getDataSources())
@@ -162,8 +161,7 @@ public class SelectStatementDataSourceExtractorTest {
 
     private SelectEntityExtractor extract(String statement) {
         SelectEntityExtractor extractor = new SelectEntityExtractor();
-        new SelectParser(statement).parse(extractor);
+        new SqlSelectStatementParser(statement).parse(extractor);
         return extractor;
     }
-
 }

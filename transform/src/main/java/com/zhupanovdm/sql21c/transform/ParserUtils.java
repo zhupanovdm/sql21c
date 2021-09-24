@@ -7,13 +7,12 @@ public class ParserUtils {
     private static final Pattern TABLE_NAME_PATTERN = Pattern.compile("\\s*\\[\\s*'?(.*?)'?\\s*]\\s*");
     private static final Pattern INCORRECT_PARAM_PATTERN = Pattern.compile("@\\d[_\\d\\w]*+");
 
-    public static String replaceIncorrectParams(String input) {
+    public static String fixIncorrectParams(String input) {
         Matcher matcher = INCORRECT_PARAM_PATTERN.matcher(input);
         StringBuilder sb = new StringBuilder();
         while (matcher.find()) {
             String group = matcher.group();
-            String s = group.charAt(0) + "_" + group.substring(1);
-            matcher.appendReplacement(sb, s);
+            matcher.appendReplacement(sb, group.charAt(0) + "_" + group.substring(1));
         }
         matcher.appendTail(sb);
         return sb.toString();
@@ -33,5 +32,4 @@ public class ParserUtils {
         }
         return input;
     }
-
 }

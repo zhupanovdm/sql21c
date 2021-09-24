@@ -4,7 +4,8 @@ SQL to 1C
 SQL statement transformation utility tool for 1C:Enterprise 8. Only SELECT SQL statement is recently supported.
 Tool is capable to transform table and fields symbols via provided namings JSON mapping file. 
 
-Example
+## Example
+
 ```java 
     SqlSelectStatementParser parser = new SqlSelectStatementParser("SELECT _IDRRef FROM dbo._acc39 WHERE _code IN ('62.01', '62.02')");
     SelectEntityExtractor extractor = new SelectEntityExtractor();

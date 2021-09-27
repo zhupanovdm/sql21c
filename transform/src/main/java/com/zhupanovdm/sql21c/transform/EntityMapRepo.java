@@ -27,10 +27,9 @@ public class EntityMapRepo {
             throw new RuntimeException("Failed to read table mapping file.", e);
         }
         tableMap = new HashMap<>();
-        List<EntityMap> repo = mappingFile.getMapping();
-        for (EntityMap em : repo) {
-            tableMap.put(em.getTable().toLowerCase(), em);
-        }
+        mappingFile.getMapping().stream()
+                .filter(map -> map.getTable() != null)
+                .forEach(map -> tableMap.put(map.getTable().toLowerCase(), map));
         return this;
     }
 

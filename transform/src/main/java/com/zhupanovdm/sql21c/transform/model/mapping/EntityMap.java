@@ -17,7 +17,7 @@ public class EntityMap {
 
     public Optional<AttributeMap> findByName(String attrName) {
         return attributes.stream()
-                .filter(map -> map.getName().equalsIgnoreCase(attrName))
+                .filter(map -> map.getName() != null && map.getName().equalsIgnoreCase(attrName))
                 .findFirst();
     }
 }

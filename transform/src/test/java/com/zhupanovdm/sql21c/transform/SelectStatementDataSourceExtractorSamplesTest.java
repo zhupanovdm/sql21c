@@ -15,8 +15,7 @@ public class SelectStatementDataSourceExtractorSamplesTest {
         SqlSelectStatementParser selectParser = new SqlSelectStatementParser(resource);
         SelectEntityExtractor extractor = new SelectEntityExtractor();
 
-        Select parse = selectParser.parse(extractor);
-        System.out.println(SqlFormatter.format(parse.toString()));
+        selectParser.parse(extractor);
 
         assertThat(extractor.getDataSources().stream().map(StatementDataSource::getName))
                 .containsExactlyInAnyOrder("_Reference266", "[_Document539]", "_Reference167",

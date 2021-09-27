@@ -9,13 +9,14 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class EntityMapRepo {
     private final ObjectMapper mapper = new ObjectMapper();
     private Map<String, EntityMap> tableMap;
 
-    public EntityMap findByTable(String table) {
-        return tableMap.get(table.toLowerCase());
+    public Optional<EntityMap> findByTable(String table) {
+        return Optional.ofNullable(tableMap.get(table.toLowerCase()));
     }
 
     public EntityMapRepo load(Path path) {

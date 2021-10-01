@@ -15,8 +15,8 @@ import net.sf.jsqlparser.statement.values.ValuesStatement;
 import java.util.*;
 
 public class SelectEntityExtractor implements SelectVisitor, StatementModel {
+    private final List<StatementDataSource> sources = new LinkedList<>();
     private final Map<String, StatementDataSource> sourceAliases = new HashMap<>();
-    private final Map<String, StatementDataSource> sourceNames = new HashMap<>();
     private final Set<StatementAttribute> unknownFields = new HashSet<>();
 
     @Override
@@ -144,20 +144,18 @@ public class SelectEntityExtractor implements SelectVisitor, StatementModel {
         if (sds.getAlias() != null) {
             sourceAliases.put(sds.getAlias(), sds);
         }
-        sourceNames.put(sds.getName(), sds);
+        sources.add(sds);
     }
 
     private StatementDataSource findStatementDataSource(Table table) {
-        StatementDataSource source = sourceNames.get(table.getName());
-        if (source == null) {
-            source = sourceAliases.get(table.getName());
-        }
-        return source;
+        return sources.stream()
+                .filter(sds -> table.getName().equals(sds.getName()))
+                .findFirst().orElseGet(() -> sourceAliases.get(table.getName()));
     }
 
     @Override
     public Collection<StatementDataSource> getDataSources() {
-        return sourceNames.values();
+        return Collections.unmodifiableList(sources);
     }
 
     @Override

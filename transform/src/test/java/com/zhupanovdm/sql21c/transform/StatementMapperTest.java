@@ -1,11 +1,11 @@
 package com.zhupanovdm.sql21c.transform;
 
-import com.github.vertical_blank.sqlformatter.SqlFormatter;
 import net.sf.jsqlparser.statement.select.Select;
 import org.junit.Test;
 
 import static com.zhupanovdm.sql21c.transform.ParserUtils.fixIncorrectParams;
 import static com.zhupanovdm.sql21c.transform.TestUtils.*;
+import static com.zhupanovdm.sql21c.transform.TestUtils.statement;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StatementMapperTest {
@@ -68,6 +68,37 @@ public class StatementMapperTest {
                         "  AND agr._Fld2576RRef <> 0x8EE51FEA085C40A544D45EFE8CD153DF\n" +
                         "  AND loc.Код IN (SELECT LocCode FROM #Loc1C)\n" +
                         "  AND sh._Fld16816RRef = @ firmID"));
+    }
+
+    @Test
+    public void mapDataSourceTwice() {
+        SqlSelectStatementParser parser = new SqlSelectStatementParser(fixIncorrectParams(
+                "SELECT\n" +
+                "  t1.name1,\n" +
+                "  t2.name3,\n" +
+                "  t3.name3\n" +
+                "FROM\n" +
+                "  table1 t1\n" +
+                "  INNER JOIN table2 t2 ON t1.name2 = t2.name4\n" +
+                "  INNER JOIN table2 t3 ON t1.name2 = t3.name4"));
+
+        SelectEntityExtractor extractor = new SelectEntityExtractor();
+
+        Select stmt = parser.parse(extractor);
+
+        EntityMapRepo repo = new EntityMapRepo().load(resourcePath("samples/tableMapping01.json"));
+        StatementMapper statementMapper = new StatementMapper(repo);
+        statementMapper.map(extractor);
+
+        assertThat(statement(stmt)).isEqualTo(statement(
+                "SELECT\n" +
+                        "  t1.field1,\n" +
+                        "  t2.field3,\n" +
+                        "  t3.field3\n" +
+                        "FROM\n" +
+                        "  entity1 t1\n" +
+                        "  INNER JOIN entity2 t2 ON t1.field2 = t2.field4\n" +
+                        "  INNER JOIN entity2 t3 ON t1.field2 = t3.field4"));
     }
 
     @Test

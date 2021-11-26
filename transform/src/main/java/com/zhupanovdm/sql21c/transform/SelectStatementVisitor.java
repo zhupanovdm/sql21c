@@ -2,10 +2,7 @@ package com.zhupanovdm.sql21c.transform;
 
 import lombok.Getter;
 import net.sf.jsqlparser.expression.*;
-import net.sf.jsqlparser.expression.operators.relational.Between;
-import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
-import net.sf.jsqlparser.expression.operators.relational.InExpression;
-import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
+import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.values.ValuesStatement;
@@ -37,6 +34,9 @@ public class SelectStatementVisitor implements SelectVisitor {
 
         if (plainSelect.getSelectItems() != null) {
             for (SelectItem item : plainSelect.getSelectItems()) {
+                if (item instanceof AllColumns) {
+                    continue;
+                }
                 findAttributesInExpression(((SelectExpressionItem) item).getExpression());
             }
         }
@@ -128,6 +128,9 @@ public class SelectStatementVisitor implements SelectVisitor {
 
         } else if (expression instanceof CastExpression) {
             findAttributesInExpression(((CastExpression) expression).getLeftExpression());
+
+        } else if (expression instanceof ExistsExpression) {
+            findAttributesInExpression(((ExistsExpression) expression).getRightExpression());
 
         } else if (expression instanceof SubSelect) {
             model.addDataSource((SubSelect) expression);

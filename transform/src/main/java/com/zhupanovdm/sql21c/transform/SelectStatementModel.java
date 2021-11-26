@@ -1,9 +1,6 @@
 package com.zhupanovdm.sql21c.transform;
 
-import com.zhupanovdm.sql21c.transform.model.db.StatementAttribute;
-import com.zhupanovdm.sql21c.transform.model.db.StatementDataSource;
-import com.zhupanovdm.sql21c.transform.model.db.StatementSubSelect;
-import com.zhupanovdm.sql21c.transform.model.db.StatementTable;
+import com.zhupanovdm.sql21c.transform.model.db.*;
 import lombok.Data;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -15,10 +12,12 @@ import java.util.*;
 @Data
 public class SelectStatementModel {
     private final SelectStatementModel parent;
+
     private final List<StatementTable> tables = new LinkedList<>();
     private final List<StatementSubSelect> subSelects = new LinkedList<>();
-    private final Map<String, StatementDataSource> sourceAliases = new HashMap<>();
     private final Set<StatementAttribute> unknownAttributes = new HashSet<>();
+
+    private final Map<String, StatementDataSource> sourceAliases = new HashMap<>();
 
     public SelectStatementModel() {
         this(null);

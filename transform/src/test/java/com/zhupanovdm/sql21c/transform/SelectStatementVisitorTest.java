@@ -195,6 +195,22 @@ public class SelectStatementVisitorTest {
                 .containsExactly("f2");
     }
 
+    @Test
+    public void testExistsExprInnerStatement() {
+        SelectStatementModel model = visit("SELECT 1 WHERE EXISTS(SELECT TOP 1 1 FROM t2)");
+
+        assertThat(model.getTables()).isEmpty();
+        assertThat(model.getSubSelects()).hasSize(1);
+    }
+
+    @Test
+    public void testAllColumns() {
+        SelectStatementModel model = visit("SELECT * FROM t");
+
+        assertThat(model.getTables()).hasSize(1);
+        assertThat(model.getSubSelects()).isEmpty();
+    }
+
     private SelectStatementModel visit(String statement) {
         SelectStatementVisitor visitor = new SelectStatementVisitor();
         new SqlSelectStatementParser(statement).parse(visitor);

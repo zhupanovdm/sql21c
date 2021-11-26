@@ -1,7 +1,7 @@
 package com.zhupanovdm.sql21c.gui;
 
 import com.github.vertical_blank.sqlformatter.SqlFormatter;
-import com.zhupanovdm.sql21c.transform.SelectEntityExtractor;
+import com.zhupanovdm.sql21c.transform.SelectStatementVisitor;
 import com.zhupanovdm.sql21c.transform.SqlSelectStatementParser;
 import com.zhupanovdm.sql21c.transform.StatementMapper;
 import javafx.concurrent.Task;
@@ -54,9 +54,9 @@ public class GuiController {
 
         @Override
         protected String call() {
-            SelectEntityExtractor extractor = new SelectEntityExtractor();
-            Select stmt = new SqlSelectStatementParser(fixIncorrectParams(sql)).parse(extractor);
-            StatementMapper.withFileRepo(file).map(extractor);
+            SelectStatementVisitor visitor = new SelectStatementVisitor();
+            Select stmt = new SqlSelectStatementParser(fixIncorrectParams(sql)).parse(visitor);
+            StatementMapper.withFileRepo(file).map(visitor.getModel());
             return SqlFormatter.format(stmt.toString());
         }
     }

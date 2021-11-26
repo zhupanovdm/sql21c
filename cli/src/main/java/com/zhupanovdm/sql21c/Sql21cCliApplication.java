@@ -1,7 +1,7 @@
 package com.zhupanovdm.sql21c;
 
 import com.github.vertical_blank.sqlformatter.SqlFormatter;
-import com.zhupanovdm.sql21c.transform.SelectEntityExtractor;
+import com.zhupanovdm.sql21c.transform.SelectStatementVisitor;
 import com.zhupanovdm.sql21c.transform.SqlSelectStatementParser;
 import com.zhupanovdm.sql21c.transform.StatementMapper;
 import net.sf.jsqlparser.statement.select.Select;
@@ -26,7 +26,7 @@ public class Sql21cCliApplication {
         String mapFilePath = cl.getOptionValue("map");
         String outputFilePath = cl.getOptionValue("output");
 
-        SelectEntityExtractor extractor = new SelectEntityExtractor();
+        SelectStatementVisitor visitor = new SelectStatementVisitor();
 
         String input;
         try {
@@ -35,8 +35,8 @@ public class Sql21cCliApplication {
             e.printStackTrace();
             return;
         }
-        Select stmt = new SqlSelectStatementParser(fixIncorrectParams(input)).parse(extractor);
-        StatementMapper.withFileRepo(mapFilePath).map(extractor);
+        Select stmt = new SqlSelectStatementParser(fixIncorrectParams(input)).parse(visitor);
+        StatementMapper.withFileRepo(mapFilePath).map(visitor.getModel());
 
         String result = SqlFormatter.format(stmt.toString());
         try {

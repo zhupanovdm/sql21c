@@ -12,13 +12,12 @@ public class StatementMapperTest {
     @Test
     public void sample() {
         SqlSelectStatementParser parser = new SqlSelectStatementParser(fixIncorrectParams(resource("samples/selectStatement01.sql")));
-        SelectEntityExtractor extractor = new SelectEntityExtractor();
-
-        Select stmt = parser.parse(extractor);
+        SelectStatementVisitor visitor = new SelectStatementVisitor();
+        Select stmt = parser.parse(visitor);
 
         EntityMapRepo repo = new EntityMapRepo().load(resourcePath("samples/tableMapping02.json"));
         StatementMapper statementMapper = new StatementMapper(repo);
-        statementMapper.map(extractor);
+        statementMapper.map(visitor.getModel());
 
         assertThat(statement(stmt)).isEqualTo(statement(
                 "SELECT\n" +
@@ -82,13 +81,12 @@ public class StatementMapperTest {
                 "  INNER JOIN table2 t2 ON t1.name2 = t2.name4\n" +
                 "  INNER JOIN table2 t3 ON t1.name2 = t3.name4"));
 
-        SelectEntityExtractor extractor = new SelectEntityExtractor();
-
-        Select stmt = parser.parse(extractor);
+        SelectStatementVisitor visitor = new SelectStatementVisitor();
+        Select stmt = parser.parse(visitor);
 
         EntityMapRepo repo = new EntityMapRepo().load(resourcePath("samples/tableMapping01.json"));
         StatementMapper statementMapper = new StatementMapper(repo);
-        statementMapper.map(extractor);
+        statementMapper.map(visitor.getModel());
 
         assertThat(statement(stmt)).isEqualTo(statement(
                 "SELECT\n" +
@@ -104,13 +102,12 @@ public class StatementMapperTest {
     @Test
     public void reverse() {
         SqlSelectStatementParser parser = new SqlSelectStatementParser(fixIncorrectParams(resource("samples/selectStatement02.sql")));
-        SelectEntityExtractor extractor = new SelectEntityExtractor();
-
-        Select stmt = parser.parse(extractor);
+        SelectStatementVisitor visitor = new SelectStatementVisitor();
+        Select stmt = parser.parse(visitor);
 
         EntityMapRepo repo = new EntityMapRepo().load(resourcePath("samples/reverseMapping.json"));
         StatementMapper statementMapper = new StatementMapper(repo);
-        statementMapper.map(extractor);
+        statementMapper.map(visitor.getModel());
 
         assertThat(statement(stmt)).isEqualTo(statement(
                 "SELECT\n" +
@@ -132,13 +129,12 @@ public class StatementMapperTest {
     @Test
     public void unknownFields() {
         SqlSelectStatementParser parser = new SqlSelectStatementParser("SELECT _IDRRef FROM dbo._acc39 WHERE _code IN ('62.01', '62.02')");
-        SelectEntityExtractor extractor = new SelectEntityExtractor();
-
-        Select stmt = parser.parse(extractor);
+        SelectStatementVisitor visitor = new SelectStatementVisitor();
+        Select stmt = parser.parse(visitor);
 
         EntityMapRepo repo = new EntityMapRepo().load(resourcePath("samples/tableMapping03.json"));
         StatementMapper statementMapper = new StatementMapper(repo);
-        statementMapper.map(extractor);
+        statementMapper.map(visitor.getModel());
 
         assertThat(statement(stmt)).isEqualTo(statement(
                 "SELECT Ссылка FROM dbo.[ПланСчетов.Хозрасчетный] WHERE Код IN ('62.01', '62.02')"));
@@ -147,13 +143,13 @@ public class StatementMapperTest {
     @Test
     public void nullTableMapping() {
         SqlSelectStatementParser parser = new SqlSelectStatementParser("SELECT acc._IDRRef FROM dbo._acc39 acc WHERE _code IN ('62.01', '62.02')");
-        SelectEntityExtractor extractor = new SelectEntityExtractor();
+        SelectStatementVisitor visitor = new SelectStatementVisitor();
 
-        Select stmt = parser.parse(extractor);
+        Select stmt = parser.parse(visitor);
 
         EntityMapRepo repo = new EntityMapRepo().load(resourcePath("samples/nullMapping.json"));
         StatementMapper statementMapper = new StatementMapper(repo);
-        statementMapper.map(extractor);
+        statementMapper.map(visitor.getModel());
 
         assertThat(statement(stmt)).isEqualTo(statement(
                 "SELECT acc.Ссылка FROM dbo._acc39 acc WHERE Код IN ('62.01', '62.02')"));
@@ -162,15 +158,61 @@ public class StatementMapperTest {
     @Test
     public void nullFieldMapping() {
         SqlSelectStatementParser parser = new SqlSelectStatementParser("SELECT acc._IDRRef FROM dbo._acc40 acc WHERE _code IN ('62.01', '62.02')");
-        SelectEntityExtractor extractor = new SelectEntityExtractor();
+        SelectStatementVisitor visitor = new SelectStatementVisitor();
 
-        Select stmt = parser.parse(extractor);
+        Select stmt = parser.parse(visitor);
 
         EntityMapRepo repo = new EntityMapRepo().load(resourcePath("samples/nullMapping.json"));
         StatementMapper statementMapper = new StatementMapper(repo);
-        statementMapper.map(extractor);
+        statementMapper.map(visitor.getModel());
 
         assertThat(statement(stmt)).isEqualTo(statement(
                 "SELECT acc._IDRRef FROM dbo.[ПланСчетов.Хозрасчетный] acc WHERE _code IN ('62.01', '62.02')"));
+    }
+
+    @Test
+    public void subSelectFieldMapping() {
+        SqlSelectStatementParser parser = new SqlSelectStatementParser("SELECT (SELECT TOP 1 _IDRRef FROM dbo._acc39 WHERE _code IN ('62.01', '62.02'))");
+        SelectStatementVisitor visitor = new SelectStatementVisitor();
+        Select stmt = parser.parse(visitor);
+
+        EntityMapRepo repo = new EntityMapRepo().load(resourcePath("samples/tableMapping03.json"));
+        StatementMapper statementMapper = new StatementMapper(repo);
+        statementMapper.map(visitor.getModel());
+
+        assertThat(statement(stmt)).isEqualTo(statement(
+                "SELECT (SELECT TOP 1  Ссылка FROM dbo.[ПланСчетов.Хозрасчетный] WHERE Код IN ('62.01', '62.02'))"));
+    }
+
+    @Test
+    public void subSelectDataSourceMapping() {
+        SqlSelectStatementParser parser = new SqlSelectStatementParser("SELECT 1 FROM (SELECT TOP 1 _IDRRef FROM dbo._acc39 WHERE _code IN ('62.01', '62.02'))");
+        SelectStatementVisitor visitor = new SelectStatementVisitor();
+        Select stmt = parser.parse(visitor);
+
+        EntityMapRepo repo = new EntityMapRepo().load(resourcePath("samples/tableMapping03.json"));
+        StatementMapper statementMapper = new StatementMapper(repo);
+        statementMapper.map(visitor.getModel());
+
+        assertThat(statement(stmt)).isEqualTo(statement(
+                "SELECT 1 FROM (SELECT TOP 1  Ссылка FROM dbo.[ПланСчетов.Хозрасчетный] WHERE Код IN ('62.01', '62.02'))"));
+    }
+
+    @Test
+    public void subSelectNestedFieldsMapping() {
+        SqlSelectStatementParser parser = new SqlSelectStatementParser(fixIncorrectParams(
+                "SELECT\n" +
+                        "  (SELECT 1 FROM table2 t2 WHERE t2.name3 = t1.name1) a\n" +
+                        "FROM\n" +
+                        "  table1 t1"));
+
+        SelectStatementVisitor visitor = new SelectStatementVisitor();
+        Select stmt = parser.parse(visitor);
+
+        EntityMapRepo repo = new EntityMapRepo().load(resourcePath("samples/tableMapping01.json"));
+        StatementMapper statementMapper = new StatementMapper(repo);
+        statementMapper.map(visitor.getModel());
+
+        assertThat(statement(stmt)).isEqualTo(statement("SELECT (SELECT 1 FROM entity2 t2 WHERE t2.field3 = t1.field1) a FROM entity1 t1"));
     }
 }

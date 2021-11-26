@@ -1,31 +1,34 @@
 package com.zhupanovdm.sql21c.transform;
 
-import com.zhupanovdm.sql21c.transform.model.db.StatementAttribute;
-import com.zhupanovdm.sql21c.transform.model.db.StatementDataSource;
+import lombok.Getter;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.relational.Between;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
 import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.values.ValuesStatement;
 
-import java.util.*;
+public class SelectStatementVisitor implements SelectVisitor {
+    @Getter
+    private final SelectStatementModel model;
 
-public class SelectEntityExtractor implements SelectVisitor, StatementModel {
-    private final List<StatementDataSource> sources = new LinkedList<>();
-    private final Map<String, StatementDataSource> sourceAliases = new HashMap<>();
-    private final Set<StatementAttribute> unknownFields = new HashSet<>();
+    public SelectStatementVisitor() {
+        this(new SelectStatementModel());
+    }
+
+    public SelectStatementVisitor(SelectStatementModel model) {
+        this.model = model;
+    }
 
     @Override
     public void visit(PlainSelect plainSelect) {
-        addStatementDataSource(plainSelect.getFromItem(Table.class));
+        model.addFromItem(plainSelect.getFromItem());
 
         if (plainSelect.getJoins() != null) {
             for (Join join : plainSelect.getJoins()) {
-                addStatementDataSource(join.getRightItem(Table.class));
+                model.addFromItem(join.getRightItem());
                 if (join.getOnExpression() != null) {
                     findAttributesInExpression(join.getOnExpression());
                 }
@@ -56,7 +59,6 @@ public class SelectEntityExtractor implements SelectVisitor, StatementModel {
         }
 
         findAttributesInExpression(plainSelect.getHaving());
-
     }
 
     @Override
@@ -77,18 +79,7 @@ public class SelectEntityExtractor implements SelectVisitor, StatementModel {
         }
 
         if (expression instanceof Column) {
-            Column column = (Column) expression;
-            Table table = column.getTable();
-            if (table == null) {
-                unknownFields.add(new StatementAttribute(column));
-            } else {
-                StatementDataSource statementDataSource = findStatementDataSource(table);
-                if (statementDataSource == null) {
-                    throw new IllegalStateException("Cannot find entity for field: " + column.getFullyQualifiedName());
-                }
-                StatementAttribute attribute = new StatementAttribute(statementDataSource, column);
-                statementDataSource.addAttribute(attribute);
-            }
+            model.addColumn((Column) expression);
 
         } else if (expression instanceof BinaryExpression) {
             BinaryExpression binaryExpression = (BinaryExpression) expression;
@@ -132,34 +123,14 @@ public class SelectEntityExtractor implements SelectVisitor, StatementModel {
             SignedExpression signedExpression = (SignedExpression) expression;
             findAttributesInExpression(signedExpression.getExpression());
 
+        } else if (expression instanceof VariableAssignment) {
+            findAttributesInExpression(((VariableAssignment) expression).getExpression());
+
+        } else if (expression instanceof CastExpression) {
+            findAttributesInExpression(((CastExpression) expression).getLeftExpression());
+
+        } else if (expression instanceof SubSelect) {
+            model.addDataSource((SubSelect) expression);
         }
-    }
-
-    private void addStatementDataSource(Table table) {
-        if (table == null) {
-            return;
-        }
-
-        StatementDataSource sds = new StatementDataSource(table);
-        if (sds.getAlias() != null) {
-            sourceAliases.put(sds.getAlias(), sds);
-        }
-        sources.add(sds);
-    }
-
-    private StatementDataSource findStatementDataSource(Table table) {
-        return sources.stream()
-                .filter(sds -> table.getName().equals(sds.getName()))
-                .findFirst().orElseGet(() -> sourceAliases.get(table.getName()));
-    }
-
-    @Override
-    public Collection<StatementDataSource> getDataSources() {
-        return Collections.unmodifiableList(sources);
-    }
-
-    @Override
-    public Set<StatementAttribute> getUnknownFields() {
-        return Collections.unmodifiableSet(unknownFields);
     }
 }

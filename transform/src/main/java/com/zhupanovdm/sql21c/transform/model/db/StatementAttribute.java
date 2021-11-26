@@ -6,7 +6,6 @@ import net.sf.jsqlparser.schema.Column;
 
 @EqualsAndHashCode(of = "attribute")
 public class StatementAttribute {
-    @Getter
     private final StatementDataSource statementDataSource;
     @Getter
     private final Column attribute;
@@ -34,10 +33,13 @@ public class StatementAttribute {
 
     @Override
     public String toString() {
-        if (statementDataSource == null) {
-            return "DataAttribute(" + getName() + ")";
-        } else {
-            return "DataAttribute(" + statementDataSource.getName() + "." + getName() + ")";
+        StringBuilder sb = new StringBuilder("DataAttribute(");
+        if (statementDataSource != null) {
+            sb.append(statementDataSource);
+            sb.append('.');
         }
+        sb.append(getName());
+        sb.append(')');
+        return sb.toString();
     }
 }

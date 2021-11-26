@@ -9,7 +9,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static com.zhupanovdm.sql21c.transform.TestUtils.resourcePath;
 
-public class StatementDataSourceMapRepoTest {
+public class EntityMapRepoTest {
     @Test
     public void test() {
         EntityMapRepo repo = new EntityMapRepo();

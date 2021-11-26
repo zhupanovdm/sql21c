@@ -7,6 +7,9 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.values.ValuesStatement;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class SelectStatementVisitor implements SelectVisitor {
     @Getter
     private final SelectStatementModel model;
@@ -21,13 +24,15 @@ public class SelectStatementVisitor implements SelectVisitor {
 
     @Override
     public void visit(PlainSelect plainSelect) {
+        List<Expression> expressions = new LinkedList<>();
+
         model.addFromItem(plainSelect.getFromItem());
 
         if (plainSelect.getJoins() != null) {
             for (Join join : plainSelect.getJoins()) {
                 model.addFromItem(join.getRightItem());
                 if (join.getOnExpression() != null) {
-                    findAttributesInExpression(join.getOnExpression());
+                    expressions.add(join.getOnExpression());
                 }
             }
         }
@@ -37,28 +42,28 @@ public class SelectStatementVisitor implements SelectVisitor {
                 if (item instanceof AllColumns) {
                     continue;
                 }
-                findAttributesInExpression(((SelectExpressionItem) item).getExpression());
+                expressions.add(((SelectExpressionItem) item).getExpression());
             }
         }
 
-        findAttributesInExpression(plainSelect.getWhere());
+        expressions.add(plainSelect.getWhere());
 
         if (plainSelect.getGroupBy() != null) {
             ExpressionList expressionList = plainSelect.getGroupBy().getGroupByExpressionList();
             if (expressionList != null) {
-                for (Expression expression : expressionList.getExpressions()) {
-                    findAttributesInExpression(expression);
-                }
+                expressions.addAll(expressionList.getExpressions());
             }
         }
 
         if (plainSelect.getOrderByElements() != null) {
             for (OrderByElement element : plainSelect.getOrderByElements()) {
-                findAttributesInExpression(element.getExpression());
+                expressions.add(element.getExpression());
             }
         }
 
-        findAttributesInExpression(plainSelect.getHaving());
+        expressions.add(plainSelect.getHaving());
+
+        expressions.forEach(this::findAttributesInExpression);
     }
 
     @Override

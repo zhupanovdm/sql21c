@@ -33,7 +33,7 @@ public class SelectStatementModel {
             unknownAttributes.add(new StatementAttribute(column));
         } else {
             Optional<StatementTable> t = tables.stream().filter(sds -> table.getName().equals(sds.getName())).findFirst();
-            StatementDataSource ds = t.isEmpty() ? sourceAliases.get(table.getName()) : t.get();
+            StatementDataSource ds = t.isEmpty() ? sourceAliases.get(table.getName().toUpperCase()) : t.get();
             if (ds == null) {
                 if (parent != null) {
                     parent.addColumn(column);
@@ -65,7 +65,7 @@ public class SelectStatementModel {
             dataSource = addDataSource((Table) src);
         }
         if (dataSource !=null && dataSource.getAlias() != null) {
-            sourceAliases.put(dataSource.getAlias(), dataSource);
+            sourceAliases.put(dataSource.getAlias().toUpperCase(), dataSource);
         }
     }
 
